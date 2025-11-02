@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\DivisionController as AdminDivisionController;
 use App\Http\Controllers\Admin\GNDivisionController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\PermitController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\ProvinceController as AdminProvinceController;
 use App\Http\Controllers\Admin\RequestController;
@@ -148,4 +149,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin']],
 
     /* compalint */
     Route::resource('complaint', ComplaintController::class);
+
+    /* Permit */
+    Route::resource('permits',PermitController::class);
 });

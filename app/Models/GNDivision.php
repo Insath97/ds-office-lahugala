@@ -11,6 +11,11 @@ class GNDivision extends Model
 
     public function divisionalSecretariat()
     {
-        return $this->belongsTo(Division::class,'divisional_secretariat_id');
+        return $this->belongsTo(Division::class, 'divisional_secretariat_id');
+    }
+
+    public function permits()
+    {
+        return $this->hasMany(Permit::class);
     }
 }

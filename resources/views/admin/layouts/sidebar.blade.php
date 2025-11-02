@@ -45,6 +45,17 @@
                 </li>
             @endif
 
+            <li class="menu-header">Land Section</li>
+            <li class="dropdown">
+                <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
+                    <i class="fas fa-landmark"></i>
+                    <span>Land Branch</span></a>
+                <ul class="dropdown-menu">
+                    <li><a class="nav-link" href="{{ route('admin.permits.index') }}">Permits</a></li>
+                    <li><a class="nav-link" href="javascript:;">Grands</a></li>
+                </ul>
+            </li>
+
             {{-- payment section --}}
             @if (canAccess(['Payment Index']))
                 <li class="menu-header">Payment Section</li>
