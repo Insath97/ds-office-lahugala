@@ -38,4 +38,9 @@ class Client extends Model
     {
         return $this->hasMany(Permit::class, 'client_id');
     }
+
+    public function grants()
+    {
+        return $this->hasMany(Grant::class);
+    }
 }

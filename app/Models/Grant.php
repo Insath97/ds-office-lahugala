@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Permit extends Model
+class Grant extends Model
 {
     use HasFactory;
 
@@ -13,9 +13,11 @@ class Permit extends Model
         'client_id',
         'gn_division_id',
         'code',
-        'permit_holder_copy',
-        'office_holder_copy',
-        'ledger',
+        'land_registry_no',
+        'date_of_issued',
+        'original_in_grantee',
+        'office_copy',
+        'land_registry_copy',
         'address',
         'type_of_land',
         'extend',
@@ -30,23 +32,26 @@ class Permit extends Model
         'name_of_nominees',
         'relationship',
         'nominated_date',
-        'grant_issued',
-        'grant_no',
-        'land_registry_no',
-        'date_of_issued',
+        'transferred',
+        'transferee_name',
+        'transferred_extend_area',
+        'related_permit_no',
+        'permit_issued_date',
         'description',
     ];
 
     protected $casts = [
-        'permit_holder_copy' => 'boolean',
-        'office_holder_copy' => 'boolean',
-        'ledger' => 'boolean',
+        'original_in_grantee' => 'boolean',
+        'office_copy' => 'boolean',
+        'land_registry_copy' => 'boolean',
         'surveyed' => 'boolean',
         'nomination' => 'boolean',
-        'grant_issued' => 'boolean',
-        'nominated_date' => 'date',
+        'transferred' => 'boolean',
         'date_of_issued' => 'date',
+        'nominated_date' => 'date',
+        'permit_issued_date' => 'date',
         'extent_value' => 'decimal:2',
+        'transferred_extend_area' => 'decimal:2',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

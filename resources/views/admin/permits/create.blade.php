@@ -99,8 +99,9 @@
                             <span class="text-danger error-text address_error"></span>
                         </div>
 
+                        <!-- Land Specifications - All three fields in one row -->
                         <div class="form-row">
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-4">
                                 <label>Type of Land <span class="text-danger">*</span></label>
                                 <select name="type_of_land"
                                     class="form-control @error('type_of_land') is-invalid @enderror">
@@ -129,7 +130,7 @@
                                 <span class="text-danger error-text type_of_land_error"></span>
                             </div>
 
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-4">
                                 <label>Extend Type <span class="text-danger">*</span></label>
                                 <select name="extend" class="form-control @error('extend') is-invalid @enderror">
                                     <option value="">Select Extend Type</option>
@@ -141,6 +142,14 @@
                                     </option>
                                 </select>
                                 <span class="text-danger error-text extend_error"></span>
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label>Extent Value</label>
+                                <input type="number" name="extent_value" step="0.01"
+                                    class="form-control @error('extent_value') is-invalid @enderror"
+                                    placeholder="Enter extent value" value="{{ old('extent_value') }}">
+                                <span class="text-danger error-text extent_value_error"></span>
                             </div>
                         </div>
 

@@ -3,35 +3,46 @@
 @section('content')
     <div class="section">
         <div class="section-header">
-            <h1>Permits</h1>
+            <h1>Grants</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="{{ route('admin.permits.index') }}">Permits</a></div>
-                <div class="breadcrumb-item">Edit Permit</div>
+                <div class="breadcrumb-item"><a href="{{ route('admin.grants.index') }}">Grants</a></div>
+                <div class="breadcrumb-item">Edit Grant</div>
             </div>
         </div>
 
         <div class="section-body">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h4>Edit Permit - {{ $permit->code }}</h4>
+                    <h4>Edit Grant - {{ $grant->code }}</h4>
                 </div>
 
                 <div class="card-body">
                     <!-- AJAX Form -->
-                    <form id="permitForm" action="{{ route('admin.permits.update', $permit->id) }}" method="POST">
+                    <form id="grantForm" action="{{ route('admin.grants.update', $grant->id) }}" method="POST">
                         @csrf
                         @method('PUT')
 
                         <div class="form-row">
                             <div class="form-group col-md-6">
-                                <label>Permit Code <span class="text-danger">*</span></label>
+                                <label>Grant Code <span class="text-danger">*</span></label>
                                 <input type="text" name="code"
-                                    class="form-control @error('code') is-invalid @enderror" placeholder="Enter permit code"
-                                    value="{{ old('code', $permit->code) }}">
+                                    class="form-control @error('code') is-invalid @enderror" placeholder="Enter grant code"
+                                    value="{{ old('code', $grant->code) }}">
                                 <span class="text-danger error-text code_error"></span>
                             </div>
 
+                            <div class="form-group col-md-6">
+                                <label>Land Registry Number <span class="text-danger">*</span></label>
+                                <input type="text" name="land_registry_no"
+                                    class="form-control @error('land_registry_no') is-invalid @enderror"
+                                    placeholder="Enter land registry number"
+                                    value="{{ old('land_registry_no', $grant->land_registry_no) }}">
+                                <span class="text-danger error-text land_registry_no_error"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label>Client <span class="text-danger">*</span></label>
                                 <select name="client_id"
@@ -39,7 +50,7 @@
                                     <option value="">Select Client</option>
                                     @forelse ($clients as $client)
                                         <option value="{{ $client->id }}"
-                                            {{ old('client_id', $permit->client_id) == $client->id ? 'selected' : '' }}>
+                                            {{ old('client_id', $grant->client_id) == $client->id ? 'selected' : '' }}>
                                             {{ $client->name }} - {{ $client->nic }}
                                         </option>
                                     @empty
@@ -48,9 +59,7 @@
                                 </select>
                                 <span class="text-danger error-text client_id_error"></span>
                             </div>
-                        </div>
 
-                        <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label>GN Division <span class="text-danger">*</span></label>
                                 <select name="gn_division_id"
@@ -58,7 +67,7 @@
                                     <option value="">Select GN Division</option>
                                     @forelse ($gn_divisions as $division)
                                         <option value="{{ $division->id }}"
-                                            {{ old('gn_division_id', $permit->gn_division_id) == $division->id ? 'selected' : '' }}>
+                                            {{ old('gn_division_id', $grant->gn_division_id) == $division->id ? 'selected' : '' }}>
                                             {{ $division->name }}
                                         </option>
                                     @empty
@@ -67,29 +76,41 @@
                                 </select>
                                 <span class="text-danger error-text gn_division_id_error"></span>
                             </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Date Issued <span class="text-danger">*</span></label>
+                                <input type="date" name="date_of_issued"
+                                    class="form-control @error('date_of_issued') is-invalid @enderror"
+                                    value="{{ old('date_of_issued', $grant->date_of_issued ? $grant->date_of_issued->format('Y-m-d') : '') }}">
+                                <span class="text-danger error-text date_of_issued_error"></span>
+                            </div>
 
                             <div class="form-group col-md-6">
                                 <label class="d-block font-weight-bold text-dark mb-3">Document Status</label>
                                 <div class="d-flex justify-content-around bg-light rounded-lg p-3 border">
                                     <label class="custom-switch mb-0">
-                                        <input type="checkbox" name="permit_holder_copy" value="1"
+                                        <input type="checkbox" name="original_in_grantee" value="1"
                                             class="custom-switch-input"
-                                            {{ old('permit_holder_copy', $permit->permit_holder_copy) ? 'checked' : '' }}>
+                                            {{ old('original_in_grantee', $grant->original_in_grantee) ? 'checked' : '' }}>
                                         <span class="custom-switch-indicator"></span>
-                                        <span class="custom-switch-description font-weight-normal ml-2">Permit Holder</span>
+                                        <span class="custom-switch-description font-weight-normal ml-2">Original in
+                                            Grantee</span>
                                     </label>
                                     <label class="custom-switch mb-0">
-                                        <input type="checkbox" name="office_holder_copy" value="1"
-                                            class="custom-switch-input"
-                                            {{ old('office_holder_copy', $permit->office_holder_copy) ? 'checked' : '' }}>
+                                        <input type="checkbox" name="office_copy" value="1" class="custom-switch-input"
+                                            {{ old('office_copy', $grant->office_copy) ? 'checked' : '' }}>
                                         <span class="custom-switch-indicator"></span>
-                                        <span class="custom-switch-description font-weight-normal ml-2">Office Holder</span>
+                                        <span class="custom-switch-description font-weight-normal ml-2">Office Copy</span>
                                     </label>
                                     <label class="custom-switch mb-0">
-                                        <input type="checkbox" name="ledger" value="1" class="custom-switch-input"
-                                            {{ old('ledger', $permit->ledger) ? 'checked' : '' }}>
+                                        <input type="checkbox" name="land_registry_copy" value="1"
+                                            class="custom-switch-input"
+                                            {{ old('land_registry_copy', $grant->land_registry_copy) ? 'checked' : '' }}>
                                         <span class="custom-switch-indicator"></span>
-                                        <span class="custom-switch-description font-weight-normal ml-2">Ledger</span>
+                                        <span class="custom-switch-description font-weight-normal ml-2">Land Registry
+                                            Copy</span>
                                     </label>
                                 </div>
                             </div>
@@ -98,11 +119,11 @@
                         <div class="form-group">
                             <label for="address">Address <span class="text-danger">*</span></label>
                             <textarea class="form-control @error('address') is-invalid @enderror" id="address" name="address" rows="3"
-                                placeholder="Enter full address">{{ old('address', $permit->address) }}</textarea>
+                                placeholder="Enter full address">{{ old('address', $grant->address) }}</textarea>
                             <span class="text-danger error-text address_error"></span>
                         </div>
 
-                        <!-- Land Specifications - All three fields in one row (EXACT SAME AS CREATE) -->
+                        <!-- Land Specifications - All three fields in one row (EXACT SAME AS PERMITS) -->
                         <div class="form-row">
                             <div class="form-group col-md-4">
                                 <label>Type of Land <span class="text-danger">*</span></label>
@@ -110,34 +131,34 @@
                                     class="form-control @error('type_of_land') is-invalid @enderror">
                                     <option value="">Select Land Type</option>
                                     <option value="agricultural"
-                                        {{ old('type_of_land', $permit->type_of_land) == 'agricultural' ? 'selected' : '' }}>
+                                        {{ old('type_of_land', $grant->type_of_land) == 'agricultural' ? 'selected' : '' }}>
                                         Agricultural</option>
                                     <option value="residential"
-                                        {{ old('type_of_land', $permit->type_of_land) == 'residential' ? 'selected' : '' }}>
+                                        {{ old('type_of_land', $grant->type_of_land) == 'residential' ? 'selected' : '' }}>
                                         Residential</option>
                                     <option value="commercial"
-                                        {{ old('type_of_land', $permit->type_of_land) == 'commercial' ? 'selected' : '' }}>
+                                        {{ old('type_of_land', $grant->type_of_land) == 'commercial' ? 'selected' : '' }}>
                                         Commercial</option>
                                     <option value="industrial"
-                                        {{ old('type_of_land', $permit->type_of_land) == 'industrial' ? 'selected' : '' }}>
+                                        {{ old('type_of_land', $grant->type_of_land) == 'industrial' ? 'selected' : '' }}>
                                         Industrial</option>
                                     <option value="forest"
-                                        {{ old('type_of_land', $permit->type_of_land) == 'forest' ? 'selected' : '' }}>
+                                        {{ old('type_of_land', $grant->type_of_land) == 'forest' ? 'selected' : '' }}>
                                         Forest</option>
                                     <option value="barren"
-                                        {{ old('type_of_land', $permit->type_of_land) == 'barren' ? 'selected' : '' }}>
+                                        {{ old('type_of_land', $grant->type_of_land) == 'barren' ? 'selected' : '' }}>
                                         Barren</option>
                                     <option value="pasture"
-                                        {{ old('type_of_land', $permit->type_of_land) == 'pasture' ? 'selected' : '' }}>
+                                        {{ old('type_of_land', $grant->type_of_land) == 'pasture' ? 'selected' : '' }}>
                                         Pasture</option>
                                     <option value="mining"
-                                        {{ old('type_of_land', $permit->type_of_land) == 'mining' ? 'selected' : '' }}>
+                                        {{ old('type_of_land', $grant->type_of_land) == 'mining' ? 'selected' : '' }}>
                                         Mining</option>
                                     <option value="recreational"
-                                        {{ old('type_of_land', $permit->type_of_land) == 'recreational' ? 'selected' : '' }}>
+                                        {{ old('type_of_land', $grant->type_of_land) == 'recreational' ? 'selected' : '' }}>
                                         Recreational</option>
                                     <option value="conservation"
-                                        {{ old('type_of_land', $permit->type_of_land) == 'conservation' ? 'selected' : '' }}>
+                                        {{ old('type_of_land', $grant->type_of_land) == 'conservation' ? 'selected' : '' }}>
                                         Conservation</option>
                                 </select>
                                 <span class="text-danger error-text type_of_land_error"></span>
@@ -148,14 +169,14 @@
                                 <select name="extend" class="form-control @error('extend') is-invalid @enderror">
                                     <option value="">Select Extend Type</option>
                                     <option value="acre"
-                                        {{ old('extend', $permit->extend) == 'acre' ? 'selected' : '' }}>Acre</option>
+                                        {{ old('extend', $grant->extend) == 'acre' ? 'selected' : '' }}>Acre</option>
                                     <option value="root"
-                                        {{ old('extend', $permit->extend) == 'root' ? 'selected' : '' }}>Root</option>
+                                        {{ old('extend', $grant->extend) == 'root' ? 'selected' : '' }}>Root</option>
                                     <option value="perches"
-                                        {{ old('extend', $permit->extend) == 'perches' ? 'selected' : '' }}>Perches
+                                        {{ old('extend', $grant->extend) == 'perches' ? 'selected' : '' }}>Perches
                                     </option>
                                     <option value="hectare"
-                                        {{ old('extend', $permit->extend) == 'hectare' ? 'selected' : '' }}>Hectare
+                                        {{ old('extend', $grant->extend) == 'hectare' ? 'selected' : '' }}>Hectare
                                     </option>
                                 </select>
                                 <span class="text-danger error-text extend_error"></span>
@@ -166,7 +187,7 @@
                                 <input type="number" name="extent_value" step="0.01"
                                     class="form-control @error('extent_value') is-invalid @enderror"
                                     placeholder="Enter extent value"
-                                    value="{{ old('extent_value', $permit->extent_value) }}">
+                                    value="{{ old('extent_value', $grant->extent_value) }}">
                                 <span class="text-danger error-text extent_value_error"></span>
                             </div>
                         </div>
@@ -175,17 +196,17 @@
                             <label>Is the land surveyed? <span class="text-danger">*</span></label>
                             <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                 <label
-                                    class="btn btn-primary {{ old('surveyed', $permit->surveyed) == 0 || old('surveyed', $permit->surveyed) == false ? 'active' : '' }}">
+                                    class="btn btn-primary {{ old('surveyed', $grant->surveyed) == 0 || old('surveyed', $grant->surveyed) == false ? 'active' : '' }}">
                                     <input type="radio" name="surveyed" id="surveyed_no" autocomplete="off"
                                         value="0"
-                                        {{ old('surveyed', $permit->surveyed) == 0 || old('surveyed', $permit->surveyed) == false ? 'checked' : '' }}>
+                                        {{ old('surveyed', $grant->surveyed) == 0 || old('surveyed', $grant->surveyed) == false ? 'checked' : '' }}>
                                     No
                                 </label>
                                 <label
-                                    class="btn btn-primary {{ old('surveyed', $permit->surveyed) == 1 || old('surveyed', $permit->surveyed) == true ? 'active' : '' }}">
+                                    class="btn btn-primary {{ old('surveyed', $grant->surveyed) == 1 || old('surveyed', $grant->surveyed) == true ? 'active' : '' }}">
                                     <input type="radio" name="surveyed" id="surveyed_yes" autocomplete="off"
                                         value="1"
-                                        {{ old('surveyed', $permit->surveyed) == 1 || old('surveyed', $permit->surveyed) == true ? 'checked' : '' }}>
+                                        {{ old('surveyed', $grant->surveyed) == 1 || old('surveyed', $grant->surveyed) == true ? 'checked' : '' }}>
                                     Yes
                                 </label>
                             </div>
@@ -197,7 +218,7 @@
                             <input type="text" name="surveyed_plan_no"
                                 class="form-control @error('surveyed_plan_no') is-invalid @enderror"
                                 placeholder="Enter survey plan number"
-                                value="{{ old('surveyed_plan_no', $permit->surveyed_plan_no) }}">
+                                value="{{ old('surveyed_plan_no', $grant->surveyed_plan_no) }}">
                             <span class="text-danger error-text surveyed_plan_no_error"></span>
                         </div>
 
@@ -208,7 +229,7 @@
                                 <input type="text" name="boundary_north"
                                     class="form-control @error('boundary_north') is-invalid @enderror"
                                     placeholder="North boundary"
-                                    value="{{ old('boundary_north', $permit->boundary_north) }}">
+                                    value="{{ old('boundary_north', $grant->boundary_north) }}">
                                 <span class="text-danger error-text boundary_north_error"></span>
                             </div>
                             <div class="form-group col-md-3">
@@ -216,7 +237,7 @@
                                 <input type="text" name="boundary_east"
                                     class="form-control @error('boundary_east') is-invalid @enderror"
                                     placeholder="East boundary"
-                                    value="{{ old('boundary_east', $permit->boundary_east) }}">
+                                    value="{{ old('boundary_east', $grant->boundary_east) }}">
                                 <span class="text-danger error-text boundary_east_error"></span>
                             </div>
                             <div class="form-group col-md-3">
@@ -224,7 +245,7 @@
                                 <input type="text" name="boundary_south"
                                     class="form-control @error('boundary_south') is-invalid @enderror"
                                     placeholder="South boundary"
-                                    value="{{ old('boundary_south', $permit->boundary_south) }}">
+                                    value="{{ old('boundary_south', $grant->boundary_south) }}">
                                 <span class="text-danger error-text boundary_south_error"></span>
                             </div>
                             <div class="form-group col-md-3">
@@ -232,7 +253,7 @@
                                 <input type="text" name="boundary_west"
                                     class="form-control @error('boundary_west') is-invalid @enderror"
                                     placeholder="West boundary"
-                                    value="{{ old('boundary_west', $permit->boundary_west) }}">
+                                    value="{{ old('boundary_west', $grant->boundary_west) }}">
                                 <span class="text-danger error-text boundary_west_error"></span>
                             </div>
                         </div>
@@ -241,17 +262,17 @@
                             <label>Is there a nomination? <span class="text-danger">*</span></label>
                             <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                 <label
-                                    class="btn btn-primary {{ old('nomination', $permit->nomination) == 0 || old('nomination', $permit->nomination) == false ? 'active' : '' }}">
+                                    class="btn btn-primary {{ old('nomination', $grant->nomination) == 0 || old('nomination', $grant->nomination) == false ? 'active' : '' }}">
                                     <input type="radio" name="nomination" id="nomination_no" autocomplete="off"
                                         value="0"
-                                        {{ old('nomination', $permit->nomination) == 0 || old('nomination', $permit->nomination) == false ? 'checked' : '' }}>
+                                        {{ old('nomination', $grant->nomination) == 0 || old('nomination', $grant->nomination) == false ? 'checked' : '' }}>
                                     No
                                 </label>
                                 <label
-                                    class="btn btn-primary {{ old('nomination', $permit->nomination) == 1 || old('nomination', $permit->nomination) == true ? 'active' : '' }}">
+                                    class="btn btn-primary {{ old('nomination', $grant->nomination) == 1 || old('nomination', $grant->nomination) == true ? 'active' : '' }}">
                                     <input type="radio" name="nomination" id="nomination_yes" autocomplete="off"
                                         value="1"
-                                        {{ old('nomination', $permit->nomination) == 1 || old('nomination', $permit->nomination) == true ? 'checked' : '' }}>
+                                        {{ old('nomination', $grant->nomination) == 1 || old('nomination', $grant->nomination) == true ? 'checked' : '' }}>
                                     Yes
                                 </label>
                             </div>
@@ -264,7 +285,7 @@
                                 <input type="text" name="name_of_nominees"
                                     class="form-control @error('name_of_nominees') is-invalid @enderror"
                                     placeholder="Nominee name"
-                                    value="{{ old('name_of_nominees', $permit->name_of_nominees) }}">
+                                    value="{{ old('name_of_nominees', $grant->name_of_nominees) }}">
                                 <span class="text-danger error-text name_of_nominees_error"></span>
                             </div>
                             <div class="form-group col-md-4">
@@ -272,76 +293,88 @@
                                 <input type="text" name="relationship"
                                     class="form-control @error('relationship') is-invalid @enderror"
                                     placeholder="Relationship with nominee"
-                                    value="{{ old('relationship', $permit->relationship) }}">
+                                    value="{{ old('relationship', $grant->relationship) }}">
                                 <span class="text-danger error-text relationship_error"></span>
                             </div>
                             <div class="form-group col-md-4">
                                 <label>Nominated Date</label>
                                 <input type="date" name="nominated_date"
                                     class="form-control @error('nominated_date') is-invalid @enderror"
-                                    value="{{ old('nominated_date', $permit->nominated_date ? $permit->nominated_date->format('Y-m-d') : '') }}">
+                                    value="{{ old('nominated_date', $grant->nominated_date ? $grant->nominated_date->format('Y-m-d') : '') }}">
                                 <span class="text-danger error-text nominated_date_error"></span>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label>Is grant issued? <span class="text-danger">*</span></label>
+                            <label>Is ownership transferred? <span class="text-danger">*</span></label>
                             <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                 <label
-                                    class="btn btn-primary {{ old('grant_issued', $permit->grant_issued) == 0 || old('grant_issued', $permit->grant_issued) == false ? 'active' : '' }}">
-                                    <input type="radio" name="grant_issued" id="grant_issued_no" autocomplete="off"
+                                    class="btn btn-primary {{ old('transferred', $grant->transferred) == 0 || old('transferred', $grant->transferred) == false ? 'active' : '' }}">
+                                    <input type="radio" name="transferred" id="transferred_no" autocomplete="off"
                                         value="0"
-                                        {{ old('grant_issued', $permit->grant_issued) == 0 || old('grant_issued', $permit->grant_issued) == false ? 'checked' : '' }}>
+                                        {{ old('transferred', $grant->transferred) == 0 || old('transferred', $grant->transferred) == false ? 'checked' : '' }}>
                                     No
                                 </label>
                                 <label
-                                    class="btn btn-primary {{ old('grant_issued', $permit->grant_issued) == 1 || old('grant_issued', $permit->grant_issued) == true ? 'active' : '' }}">
-                                    <input type="radio" name="grant_issued" id="grant_issued_yes" autocomplete="off"
+                                    class="btn btn-primary {{ old('transferred', $grant->transferred) == 1 || old('transferred', $grant->transferred) == true ? 'active' : '' }}">
+                                    <input type="radio" name="transferred" id="transferred_yes" autocomplete="off"
                                         value="1"
-                                        {{ old('grant_issued', $permit->grant_issued) == 1 || old('grant_issued', $permit->grant_issued) == true ? 'checked' : '' }}>
+                                        {{ old('transferred', $grant->transferred) == 1 || old('transferred', $grant->transferred) == true ? 'checked' : '' }}>
                                     Yes
                                 </label>
                             </div>
-                            <span class="text-danger error-text grant_issued_error"></span>
+                            <span class="text-danger error-text transferred_error"></span>
                         </div>
 
-                        <div class="form-row" id="grant_container">
-                            <div class="form-group col-md-4">
-                                <label>Grant Number</label>
-                                <input type="text" name="grant_no"
-                                    class="form-control @error('grant_no') is-invalid @enderror"
-                                    placeholder="Grant number" value="{{ old('grant_no', $permit->grant_no) }}">
-                                <span class="text-danger error-text grant_no_error"></span>
+                        <div class="form-row" id="transfer_container">
+                            <div class="form-group col-md-6">
+                                <label>Transferee Name</label>
+                                <input type="text" name="transferee_name"
+                                    class="form-control @error('transferee_name') is-invalid @enderror"
+                                    placeholder="Transferee name"
+                                    value="{{ old('transferee_name', $grant->transferee_name) }}">
+                                <span class="text-danger error-text transferee_name_error"></span>
                             </div>
-                            <div class="form-group col-md-4">
-                                <label>Land Registry Number</label>
-                                <input type="text" name="land_registry_no"
-                                    class="form-control @error('land_registry_no') is-invalid @enderror"
-                                    placeholder="Land registry number"
-                                    value="{{ old('land_registry_no', $permit->land_registry_no) }}">
-                                <span class="text-danger error-text land_registry_no_error"></span>
+                            <div class="form-group col-md-6">
+                                <label>Transferred Extend Area</label>
+                                <input type="number" name="transferred_extend_area" step="0.01"
+                                    class="form-control @error('transferred_extend_area') is-invalid @enderror"
+                                    placeholder="Transferred area"
+                                    value="{{ old('transferred_extend_area', $grant->transferred_extend_area) }}">
+                                <span class="text-danger error-text transferred_extend_area_error"></span>
                             </div>
-                            <div class="form-group col-md-4">
-                                <label>Date Issued</label>
-                                <input type="date" name="date_of_issued"
-                                    class="form-control @error('date_of_issued') is-invalid @enderror"
-                                    value="{{ old('date_of_issued', $permit->date_of_issued ? $permit->date_of_issued->format('Y-m-d') : '') }}">
-                                <span class="text-danger error-text date_of_issued_error"></span>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Related Permit Number</label>
+                                <input type="text" name="related_permit_no"
+                                    class="form-control @error('related_permit_no') is-invalid @enderror"
+                                    placeholder="Related permit number"
+                                    value="{{ old('related_permit_no', $grant->related_permit_no) }}">
+                                <span class="text-danger error-text related_permit_no_error"></span>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Permit Issued Date</label>
+                                <input type="date" name="permit_issued_date"
+                                    class="form-control @error('permit_issued_date') is-invalid @enderror"
+                                    value="{{ old('permit_issued_date', $grant->permit_issued_date ? $grant->permit_issued_date->format('Y-m-d') : '') }}">
+                                <span class="text-danger error-text permit_issued_date_error"></span>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="description">Remarks</label>
                             <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description"
-                                rows="3" placeholder="Enter any additional remarks or description">{{ old('description', $permit->description) }}</textarea>
+                                rows="3" placeholder="Enter any additional remarks or description">{{ old('description', $grant->description) }}</textarea>
                             <span class="text-danger error-text description_error"></span>
                         </div>
 
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary" id="submitBtn">
-                                <i class="fas fa-save"></i> Update Permit
+                                <i class="fas fa-save"></i> Update Grant
                             </button>
-                            <a href="{{ route('admin.permits.index') }}" class="btn btn-secondary">
+                            <a href="{{ route('admin.grants.index') }}" class="btn btn-secondary">
                                 <i class="fas fa-times"></i> Cancel
                             </a>
                         </div>
@@ -372,16 +405,16 @@
                 toggleNominationFields();
             });
 
-            // Toggle grant fields based on radio button selection
-            $('input[name="grant_issued"]').on('change', function() {
-                toggleGrantFields();
+            // Toggle transfer fields based on radio button selection
+            $('input[name="transferred"]').on('change', function() {
+                toggleTransferFields();
             });
 
             // Function to initialize all conditional fields
             function initializeConditionalFields() {
                 toggleSurveyedPlan();
                 toggleNominationFields();
-                toggleGrantFields();
+                toggleTransferFields();
             }
 
             // Function to toggle surveyed plan field
@@ -404,12 +437,12 @@
                 }
             }
 
-            // Function to toggle grant fields
-            function toggleGrantFields() {
-                if ($('input[name="grant_issued"]:checked').val() == '1') {
-                    $('#grant_container').show();
+            // Function to toggle transfer fields
+            function toggleTransferFields() {
+                if ($('input[name="transferred"]:checked').val() == '1') {
+                    $('#transfer_container').show();
                 } else {
-                    $('#grant_container').hide();
+                    $('#transfer_container').hide();
                     // Don't clear the values on initialization, only on user change
                 }
             }
@@ -429,16 +462,15 @@
                 }
             });
 
-            $('input[name="grant_issued"]').on('change', function() {
+            $('input[name="transferred"]').on('change', function() {
                 if ($(this).val() == '0') {
-                    $('input[name="grant_no"]').val('');
-                    $('input[name="land_registry_no"]').val('');
-                    $('input[name="date_of_issued"]').val('');
+                    $('input[name="transferee_name"]').val('');
+                    $('input[name="transferred_extend_area"]').val('');
                 }
             });
 
             /* AJAX Form Submission */
-            $('#permitForm').on('submit', function(e) {
+            $('#grantForm').on('submit', function(e) {
                 e.preventDefault();
 
                 let form = $(this);
@@ -462,21 +494,21 @@
                     },
                     success: function(response) {
                         submitBtn.prop('disabled', false).html(
-                            '<i class="fas fa-save"></i> Update Permit');
+                            '<i class="fas fa-save"></i> Update Grant');
 
                         if (response.success) {
                             showToast('success', response.message);
 
-                            // Redirect to permits index after delay
+                            // Redirect to grants index after delay
                             setTimeout(function() {
                                 window.location.href =
-                                    "{{ route('admin.permits.index') }}";
+                                    "{{ route('admin.grants.index') }}";
                             }, 1500);
                         }
                     },
                     error: function(response) {
                         submitBtn.prop('disabled', false).html(
-                            '<i class="fas fa-save"></i> Update Permit');
+                            '<i class="fas fa-save"></i> Update Grant');
 
                         if (response.status === 422) {
                             let errors = response.responseJSON.errors;
@@ -486,7 +518,7 @@
                             showToast('error', 'Please fix the validation errors.');
                         } else if (response.status === 500) {
                             showToast('error', response.responseJSON.message ||
-                                'An error occurred while updating the permit.');
+                                'An error occurred while updating the grant.');
                         } else {
                             showToast('error', 'An unexpected error occurred.');
                         }

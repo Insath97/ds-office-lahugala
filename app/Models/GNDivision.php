@@ -18,4 +18,9 @@ class GNDivision extends Model
     {
         return $this->hasMany(Permit::class);
     }
+
+    public function grants()
+    {
+        return $this->hasMany(Grant::class);
+    }
 }

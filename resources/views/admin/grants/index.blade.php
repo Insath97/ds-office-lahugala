@@ -3,21 +3,21 @@
 @section('content')
     <div class="section">
         <div class="section-header">
-            <h1>Permits</h1>
+            <h1>Grants</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">Dashboard</a></div>
-                <div class="breadcrumb-item">Permits</div>
+                <div class="breadcrumb-item">Grants</div>
             </div>
         </div>
 
         <div class="section-body">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h4>All Permits</h4>
+                    <h4>All Grants</h4>
                     <div class="card-header-action">
-                        <a href="{{ route('admin.permits.create') }}" class="btn btn-primary">
+                        <a href="{{ route('admin.grants.create') }}" class="btn btn-primary">
                             <i class="fas fa-plus"></i>
-                            Create New Permit
+                            Create New Grant
                         </a>
                     </div>
                 </div>
@@ -27,57 +27,51 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Permit Code</th>
-                                    <th>Permit Holder</th>
+                                    <th>Grant Code</th>
+                                    <th>Land Registry No</th>
+                                    <th>Grant Holder</th>
                                     <th>NIC</th>
                                     <th>GN Division</th>
                                     <th>Land Type</th>
                                     <th>Surveyed</th>
-                                    <th>Grant Issued</th>
                                     <th>Created Date</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($permits as $permit)
+                                @foreach ($grants as $grant)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $permit->code }}</td>
-                                        <td>{{ $permit->client->name ?? 'N/A' }}</td>
-                                        <td>{{ $permit->client->nic ?? 'N/A' }}</td>
-                                        <td>{{ $permit->gnDivision->name ?? 'N/A' }}</td>
+                                        <td>{{ $grant->code }}</td>
+                                        <td>{{ $grant->land_registry_no }}</td>
+                                        <td>{{ $grant->client->name ?? 'N/A' }}</td>
+                                        <td>{{ $grant->client->nic ?? 'N/A' }}</td>
+                                        <td>{{ $grant->gnDivision->name ?? 'N/A' }}</td>
                                         <td>
-                                            <span class="badge badge-primary">{{ $permit->type_of_land }}</span>
+                                            <span class="badge badge-primary">{{ $grant->type_of_land }}</span>
                                         </td>
                                         <td>
-                                            @if ($permit->surveyed)
+                                            @if ($grant->surveyed)
                                                 <span class="badge badge-success">Yes</span>
                                             @else
                                                 <span class="badge badge-danger">No</span>
                                             @endif
                                         </td>
                                         <td>
-                                            @if ($permit->grant_issued)
-                                                <span class="badge badge-success">Yes</span>
-                                            @else
-                                                <span class="badge badge-warning">No</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            {{ $permit->created_at->format('Y-m-d') }}
+                                            {{ $grant->created_at->format('Y-m-d') }}
                                         </td>
                                         <td>
                                             <div class="d-flex justify-content-start">
                                                 <button class="btn btn-info mr-1 text-center view-details"
-                                                    data-toggle="modal" data-target="#permitDetailsModal"
-                                                    data-permit-id="{{ $permit->id }}">
+                                                    data-toggle="modal" data-target="#grantDetailsModal"
+                                                    data-grant-id="{{ $grant->id }}">
                                                     <i class="fas fa-eye fa-lg"></i>
                                                 </button>
-                                                <a href="{{ route('admin.permits.edit', $permit->id) }}"
+                                                <a href="{{ route('admin.grants.edit', $grant->id) }}"
                                                     class="btn btn-success mr-1 text-center">
                                                     <i class="fas fa-edit fa-lg"></i>
                                                 </a>
-                                                <a href="{{ route('admin.permits.destroy', $permit->id) }}"
+                                                <a href="{{ route('admin.grants.destroy', $grant->id) }}"
                                                     class="btn btn-danger text-center delete-item">
                                                     <i class="fas fa-trash fa-lg"></i>
                                                 </a>
@@ -93,16 +87,16 @@
         </div>
     </div>
 
-    <!-- Permit Details Modal -->
-    <div class="modal fade" id="permitDetailsModal" tabindex="-1" role="dialog" aria-labelledby="permitDetailsModalLabel"
+    <!-- Grant Details Modal -->
+    <div class="modal fade" id="grantDetailsModal" tabindex="-1" role="dialog" aria-labelledby="grantDetailsModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content border-0">
                 <div class="modal-header bg-primary text-white rounded-top">
                     <div class="d-flex align-items-center w-100">
                         <div class="flex-grow-1">
-                            <h5 class="modal-title mb-0">LAND PERMIT CERTIFICATE - DETAILED VIEW</h5>
-                            <small class="text-white-50">Permit Code: <strong id="permitCode"
+                            <h5 class="modal-title mb-0">LAND GRANT CERTIFICATE - DETAILED VIEW</h5>
+                            <small class="text-white-50">Grant Code: <strong id="grantCode"
                                     class="text-white">-</strong></small>
                         </div>
                         <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
@@ -111,33 +105,58 @@
                     </div>
                 </div>
 
-                <!-- Status Indicators -->
-                <div class="bg-light border-bottom py-3">
+                <!-- Status Indicators - Responsive (Auto-layout) -->
+                <div class="bg-light border-bottom py-2">
                     <div class="container-fluid">
-                        <div class="row text-center">
-                            <div class="col">
-                                <span class="badge badge-secondary badge-pill px-3 py-2" id="statusPermitHolderCopy">
-                                    <i class="fas fa-check-circle mr-1"></i>Holder Copy
+                        <div class="row justify-content-center text-center align-items-center">
+                            <!-- Original in Grantee -->
+                            <div class="col-auto col-sm-4 col-md col-lg mb-2 mb-md-0 px-1">
+                                <span class="badge badge-secondary badge-pill px-2 py-1 d-inline-flex align-items-center"
+                                    id="statusOriginalInGrantee">
+                                    <i class="fas fa-check-circle mr-1"></i>
+                                    <span class="d-none d-sm-inline">Original</span>
+                                    <span class="d-inline d-sm-none">Orig.</span>
                                 </span>
                             </div>
-                            <div class="col">
-                                <span class="badge badge-secondary badge-pill px-3 py-2" id="statusOfficeHolderCopy">
-                                    <i class="fas fa-file-alt mr-1"></i>Office Copy
+
+                            <!-- Office Copy -->
+                            <div class="col-auto col-sm-4 col-md col-lg mb-2 mb-md-0 px-1">
+                                <span class="badge badge-secondary badge-pill px-2 py-1 d-inline-flex align-items-center"
+                                    id="statusOfficeCopy">
+                                    <i class="fas fa-file-alt mr-1"></i>
+                                    <span class="d-none d-sm-inline">Office</span>
+                                    <span class="d-inline d-sm-none">Office</span>
                                 </span>
                             </div>
-                            <div class="col">
-                                <span class="badge badge-secondary badge-pill px-3 py-2" id="statusLedger">
-                                    <i class="fas fa-book mr-1"></i>Ledger
+
+                            <!-- Land Registry Copy -->
+                            <div class="col-auto col-sm-4 col-md col-lg mb-2 mb-md-0 px-1">
+                                <span class="badge badge-secondary badge-pill px-2 py-1 d-inline-flex align-items-center"
+                                    id="statusLandRegistryCopy">
+                                    <i class="fas fa-archive mr-1"></i>
+                                    <span class="d-none d-md-inline">Registry</span>
+                                    <span class="d-none d-sm-inline d-md-none">Reg.</span>
+                                    <span class="d-inline d-sm-none">Reg.</span>
                                 </span>
                             </div>
-                            <div class="col">
-                                <span class="badge badge-secondary badge-pill px-3 py-2" id="statusSurveyed">
-                                    <i class="fas fa-map-marked-alt mr-1"></i>Surveyed
+
+                            <!-- Surveyed -->
+                            <div class="col-auto col-sm-4 col-md col-lg mb-2 mb-md-0 px-1">
+                                <span class="badge badge-secondary badge-pill px-2 py-1 d-inline-flex align-items-center"
+                                    id="statusSurveyed">
+                                    <i class="fas fa-map-marked-alt mr-1"></i>
+                                    <span class="d-none d-sm-inline">Surveyed</span>
+                                    <span class="d-inline d-sm-none">Surv.</span>
                                 </span>
                             </div>
-                            <div class="col">
-                                <span class="badge badge-secondary badge-pill px-3 py-2" id="statusGrantIssued">
-                                    <i class="fas fa-certificate mr-1"></i>Grant Issued
+
+                            <!-- Transferred -->
+                            <div class="col-auto col-sm-4 col-md col-lg mb-2 mb-md-0 px-1">
+                                <span class="badge badge-secondary badge-pill px-2 py-1 d-inline-flex align-items-center"
+                                    id="statusTransferred">
+                                    <i class="fas fa-exchange-alt mr-1"></i>
+                                    <span class="d-none d-sm-inline">Transferred</span>
+                                    <span class="d-inline d-sm-none">Trans.</span>
                                 </span>
                             </div>
                         </div>
@@ -151,7 +170,7 @@
                             <div class="spinner-border text-primary" role="status">
                                 <span class="sr-only">Loading...</span>
                             </div>
-                            <p class="mt-2 text-muted">Loading permit details...</p>
+                            <p class="mt-2 text-muted">Loading grant details...</p>
                         </div>
 
                         <!-- Content Area -->
@@ -215,10 +234,10 @@
                             <div class="row">
                                 <!-- Left Column -->
                                 <div class="col-lg-6">
-                                    <!-- Permit Holder Information -->
+                                    <!-- Grant Holder Information -->
                                     <div class="card border-primary mb-4 shadow-sm">
                                         <div class="card-header bg-primary text-white py-2">
-                                            <h6 class="mb-0"><i class="fas fa-user-tie mr-2"></i>Permit Holder
+                                            <h6 class="mb-0"><i class="fas fa-user-tie mr-2"></i>Grant Holder
                                                 Information
                                             </h6>
                                         </div>
@@ -226,7 +245,7 @@
                                             <div class="row">
                                                 <div class="col-md-6 mb-3">
                                                     <small class="text-muted font-weight-bold">FULL NAME</small>
-                                                    <div class="font-weight-bold text-dark fs-6" id="modalPermitHolder">-
+                                                    <div class="font-weight-bold text-dark fs-6" id="modalGrantHolder">-
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 mb-3">
@@ -243,8 +262,8 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
-                                                    <small class="text-muted font-weight-bold">PERMIT CODE</small>
-                                                    <div class="font-weight-bold text-dark fs-6" id="modalPermitCode">-
+                                                    <small class="text-muted font-weight-bold">GRANT CODE</small>
+                                                    <div class="font-weight-bold text-dark fs-6" id="modalGrantCode">-
                                                     </div>
                                                 </div>
                                             </div>
@@ -276,8 +295,9 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 mb-3">
-                                                    <small class="text-muted font-weight-bold">LEDGER STATUS</small>
-                                                    <div class="font-weight-bold text-dark fs-6" id="modalLedger">-</div>
+                                                    <small class="text-muted font-weight-bold">LAND REGISTRY NO</small>
+                                                    <div class="font-weight-bold text-dark fs-6" id="modalLandRegistryNo">
+                                                        -</div>
                                                 </div>
                                                 <div class="col-12 mb-3">
                                                     <small class="text-muted font-weight-bold">SURVEY PLAN NO</small>
@@ -323,26 +343,29 @@
                                         </div>
                                     </div>
 
-                                    <!-- Grant Information -->
+                                    <!-- Transfer Information -->
                                     <div class="card border-danger mb-4 shadow-sm">
                                         <div class="card-header bg-danger text-white py-2">
-                                            <h6 class="mb-0"><i class="fas fa-certificate mr-2"></i>Grant Information
+                                            <h6 class="mb-0"><i class="fas fa-exchange-alt mr-2"></i>Transfer
+                                                Information
                                             </h6>
                                         </div>
                                         <div class="card-body p-3">
                                             <div class="row">
                                                 <div class="col-md-6 mb-3">
-                                                    <small class="text-muted font-weight-bold">GRANT STATUS</small>
-                                                    <div class="font-weight-bold text-dark fs-6" id="modalGrantIssued">-
+                                                    <small class="text-muted font-weight-bold">TRANSFER STATUS</small>
+                                                    <div class="font-weight-bold text-dark fs-6" id="modalTransferred">-
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 mb-3">
-                                                    <small class="text-muted font-weight-bold">GRANT NUMBER</small>
-                                                    <div class="font-weight-bold text-dark fs-6" id="modalGrantNo">-</div>
+                                                    <small class="text-muted font-weight-bold">TRANSFEREE NAME</small>
+                                                    <div class="font-weight-bold text-dark fs-6" id="modalTransfereeName">
+                                                        -</div>
                                                 </div>
                                                 <div class="col-md-6 mb-3">
-                                                    <small class="text-muted font-weight-bold">LAND REGISTRY NO</small>
-                                                    <div class="font-weight-bold text-dark fs-6" id="modalLandRegistry">-
+                                                    <small class="text-muted font-weight-bold">TRANSFERRED AREA</small>
+                                                    <div class="font-weight-bold text-dark fs-6"
+                                                        id="modalTransferredArea">-
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 mb-3">
@@ -354,14 +377,40 @@
                                         </div>
                                     </div>
 
-                                    <!-- Additional Remarks -->
+                                    <!-- Permit Information -->
+                                    <div class="card border-info mb-4 shadow-sm">
+                                        <div class="card-header bg-info text-white py-2">
+                                            <h6 class="mb-0"><i class="fas fa-file-contract mr-2"></i>Permit Information
+                                            </h6>
+                                        </div>
+                                        <div class="card-body p-3">
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <small class="text-muted font-weight-bold">RELATED PERMIT NO</small>
+                                                    <div class="font-weight-bold text-dark fs-6"
+                                                        id="modalRelatedPermitNo">-</div>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <small class="text-muted font-weight-bold">PERMIT ISSUED DATE</small>
+                                                    <div class="font-weight-bold text-dark fs-6"
+                                                        id="modalPermitIssuedDate">-</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
                                     <div class="card border-secondary shadow-sm">
                                         <div class="card-header bg-secondary text-white py-2">
                                             <h6 class="mb-0"><i class="fas fa-file-alt mr-2"></i>Additional Remarks</h6>
                                         </div>
-                                        <div class="card-body">
-                                            <div class="border rounded p-3 bg-light">
-                                                <div id="modalDescription" class="text-dark fs-6">
+                                        <div class="card-body p-0">
+                                            <div class="border-0 p-3 bg-light">
+                                                <div id="modalDescription" class="text-dark fs-6"
+                                                    style="min-height: 80px;">
                                                     No additional remarks provided.
                                                 </div>
                                             </div>
@@ -387,8 +436,8 @@
                             <button type="button" class="btn btn-secondary mr-2" data-dismiss="modal">
                                 <i class="fas fa-times mr-1"></i>Close
                             </button>
-                            <button type="button" class="btn btn-primary" id="editPermitBtn">
-                                <i class="fas fa-edit mr-1"></i>Edit Permit
+                            <button type="button" class="btn btn-primary" id="editGrantBtn">
+                                <i class="fas fa-edit mr-1"></i>Edit Grant
                             </button>
                         </div>
                     </div>
@@ -405,21 +454,21 @@
             $("#table-1").dataTable({
                 "columnDefs": [{
                     "sortable": false,
-                    "targets": [9] // Actions column (updated index)
+                    "targets": [9] // Actions column
                 }]
             });
 
             // Handle view details button click
             $('.view-details').on('click', function() {
-                const permitId = $(this).data('permit-id');
-                console.log('Loading permit ID:', permitId);
+                const grantId = $(this).data('grant-id');
+                console.log('Loading grant ID:', grantId);
 
                 // Show loading spinner
                 $('#loadingSpinner').show();
                 $('#modalContent').hide();
 
                 $.ajax({
-                    url: "{{ route('admin.permits.show', '') }}/" + permitId,
+                    url: "{{ route('admin.grants.show', '') }}/" + grantId,
                     method: 'GET',
                     success: function(response) {
                         console.log('AJAX Response:', response);
@@ -428,13 +477,13 @@
                         $('#modalContent').show();
 
                         if (response.success) {
-                            const permit = response.data;
-                            console.log('Permit Data:', permit);
-                            updateModalContent(permit);
+                            const grant = response.data;
+                            console.log('Grant Data:', grant);
+                            updateModalContent(grant);
                         } else {
                             showToast('error', response.message ||
-                                'Failed to load permit details.');
-                            $('#permitDetailsModal').modal('hide');
+                                'Failed to load grant details.');
+                            $('#grantDetailsModal').modal('hide');
                         }
                     },
                     error: function(xhr, status, error) {
@@ -445,15 +494,15 @@
                         $('#modalContent').show();
 
                         showToast('error',
-                            'Failed to load permit details. Please check console for details.'
+                            'Failed to load grant details. Please check console for details.'
                         );
-                        $('#permitDetailsModal').modal('hide');
+                        $('#grantDetailsModal').modal('hide');
                     }
                 });
             });
 
             // Reset modal when closed
-            $('#permitDetailsModal').on('hidden.bs.modal', function() {
+            $('#grantDetailsModal').on('hidden.bs.modal', function() {
                 resetModalContent();
             });
         });
@@ -483,65 +532,70 @@
         }
 
         // Function to update modal content with ALL data
-        function updateModalContent(permit) {
-            console.log('Updating modal with permit:', permit);
+        function updateModalContent(grant) {
+            console.log('Updating modal with grant:', grant);
 
-            // Basic permit info
-            $('#permitCode').text(permit.code || 'N/A');
-            $('#modalPermitCode').text(permit.code || 'N/A');
-            $('#modalPermitHolder').text(permit.client?.name || 'N/A');
-            $('#modalNIC').text(permit.client?.nic || 'N/A');
-            $('#modalAddress').text(permit.address || 'N/A');
-            $('#modalGNDivision').text(permit.gn_division?.name || 'N/A');
+            // Basic grant info
+            $('#grantCode').text(grant.code || 'N/A');
+            $('#modalGrantCode').text(grant.code || 'N/A');
+            $('#modalGrantHolder').text(grant.client?.name || 'N/A');
+            $('#modalNIC').text(grant.client?.nic || 'N/A');
+            $('#modalAddress').text(grant.address || 'N/A');
+            $('#modalGNDivision').text(grant.gn_division?.name || 'N/A');
 
             // Land specifications
-            $('#modalLandType').text(permit.type_of_land || 'N/A');
-            $('#modalExtendType').text(permit.extend || 'N/A');
-            $('#modalExtentValue').text(permit.extent_value ? permit.extent_value + ' ' + permit.extend : 'N/A');
-            $('#modalLedger').text(permit.ledger ? 'Yes' : 'No');
-            $('#modalSurveyPlan').text(permit.surveyed_plan_no || 'N/A');
+            $('#modalLandType').text(grant.type_of_land || 'N/A');
+            $('#modalExtendType').text(grant.extend || 'N/A');
+            $('#modalExtentValue').text(grant.extent_value ? grant.extent_value + ' ' + grant.extend : 'N/A');
+            $('#modalLandRegistryNo').text(grant.land_registry_no || 'N/A');
+            $('#modalSurveyPlan').text(grant.surveyed_plan_no || 'N/A');
 
             // Boundaries
-            $('#modalBoundaryNorth').text(permit.boundary_north || 'N/A');
-            $('#modalBoundaryEast').text(permit.boundary_east || 'N/A');
-            $('#modalBoundarySouth').text(permit.boundary_south || 'N/A');
-            $('#modalBoundaryWest').text(permit.boundary_west || 'N/A');
+            $('#modalBoundaryNorth').text(grant.boundary_north || 'N/A');
+            $('#modalBoundaryEast').text(grant.boundary_east || 'N/A');
+            $('#modalBoundarySouth').text(grant.boundary_south || 'N/A');
+            $('#modalBoundaryWest').text(grant.boundary_west || 'N/A');
 
             // Nomination information
-            $('#modalNomination').text(permit.nomination ? 'Yes' : 'No');
-            $('#modalNomineeName').text(permit.name_of_nominees || 'N/A');
-            $('#modalRelationship').text(permit.relationship || 'N/A');
-            $('#modalNominatedDate').text(formatDate(permit.nominated_date) || 'N/A');
+            $('#modalNomination').text(grant.nomination ? 'Yes' : 'No');
+            $('#modalNomineeName').text(grant.name_of_nominees || 'N/A');
+            $('#modalRelationship').text(grant.relationship || 'N/A');
+            $('#modalNominatedDate').text(formatDate(grant.nominated_date) || 'N/A');
 
-            // Grant information
-            $('#modalGrantIssued').text(permit.grant_issued ? 'Yes' : 'No');
-            $('#modalGrantNo').text(permit.grant_no || 'N/A');
-            $('#modalLandRegistry').text(permit.land_registry_no || 'N/A');
-            $('#modalDateIssued').text(formatDate(permit.date_of_issued) || 'N/A');
+            // Transfer information
+            $('#modalTransferred').text(grant.transferred ? 'Yes' : 'No');
+            $('#modalTransfereeName').text(grant.transferee_name || 'N/A');
+            $('#modalTransferredArea').text(grant.transferred_extend_area ? grant.transferred_extend_area + ' ' + grant
+                .extend : 'N/A');
+            $('#modalDateIssued').text(formatDate(grant.date_of_issued) || 'N/A');
+
+            // Permit information
+            $('#modalRelatedPermitNo').text(grant.related_permit_no || 'N/A');
+            $('#modalPermitIssuedDate').text(formatDate(grant.permit_issued_date) || 'N/A');
 
             // Description
-            $('#modalDescription').text(permit.description || 'No additional remarks provided.');
+            $('#modalDescription').text(grant.description || 'No additional remarks provided.');
 
             // Update status badges
-            updateStatusBadges(permit);
+            updateStatusBadges(grant);
 
             // Set edit button URL
-            $('#editPermitBtn').attr('onclick', `window.location.href='/admin/permits/${permit.id}/edit'`);
+            $('#editGrantBtn').attr('onclick', `window.location.href='/admin/grants/${grant.id}/edit'`);
         }
 
         // Function to reset modal content
         function resetModalContent() {
             // Reset all fields to default
-            $('#permitCode').text('-');
-            $('#modalPermitCode').text('-');
-            $('#modalPermitHolder').text('-');
+            $('#grantCode').text('-');
+            $('#modalGrantCode').text('-');
+            $('#modalGrantHolder').text('-');
             $('#modalNIC').text('-');
             $('#modalAddress').text('-');
             $('#modalGNDivision').text('-');
             $('#modalLandType').text('-');
             $('#modalExtendType').text('-');
             $('#modalExtentValue').text('-');
-            $('#modalLedger').text('-');
+            $('#modalLandRegistryNo').text('-');
             $('#modalSurveyPlan').text('-');
             $('#modalBoundaryNorth').text('-');
             $('#modalBoundaryEast').text('-');
@@ -551,10 +605,12 @@
             $('#modalNomineeName').text('-');
             $('#modalRelationship').text('-');
             $('#modalNominatedDate').text('-');
-            $('#modalGrantIssued').text('-');
-            $('#modalGrantNo').text('-');
-            $('#modalLandRegistry').text('-');
+            $('#modalTransferred').text('-');
+            $('#modalTransfereeName').text('-');
+            $('#modalTransferredArea').text('-');
             $('#modalDateIssued').text('-');
+            $('#modalRelatedPermitNo').text('-');
+            $('#modalPermitIssuedDate').text('-');
             $('#modalDescription').text('No additional remarks provided.');
 
             // Reset all badges to inactive state
@@ -562,23 +618,23 @@
         }
 
         // Function to update status badges
-        function updateStatusBadges(permit) {
-            console.log('Updating badges with permit data:', permit);
+        function updateStatusBadges(grant) {
+            console.log('Updating badges with grant data:', grant);
 
-            // Permit Holder Copy
-            updateBadgeStatus('statusPermitHolderCopy', permit.permit_holder_copy, 'success', 'secondary');
+            // Original in Grantee
+            updateBadgeStatus('statusOriginalInGrantee', grant.original_in_grantee, 'success', 'secondary');
 
-            // Office Holder Copy
-            updateBadgeStatus('statusOfficeHolderCopy', permit.office_holder_copy, 'info', 'secondary');
+            // Office Copy
+            updateBadgeStatus('statusOfficeCopy', grant.office_copy, 'info', 'secondary');
 
-            // Ledger
-            updateBadgeStatus('statusLedger', permit.ledger, 'warning', 'secondary');
+            // Land Registry Copy
+            updateBadgeStatus('statusLandRegistryCopy', grant.land_registry_copy, 'warning', 'secondary');
 
             // Surveyed
-            updateBadgeStatus('statusSurveyed', permit.surveyed, 'warning', 'secondary');
+            updateBadgeStatus('statusSurveyed', grant.surveyed, 'warning', 'secondary');
 
-            // Grant Issued
-            updateBadgeStatus('statusGrantIssued', permit.grant_issued, 'danger', 'secondary');
+            // Transferred
+            updateBadgeStatus('statusTransferred', grant.transferred, 'danger', 'secondary');
         }
 
         // Function to reset all status badges

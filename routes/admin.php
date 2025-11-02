@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DistrictController;
 use App\Http\Controllers\Admin\DivisionController as AdminDivisionController;
 use App\Http\Controllers\Admin\GNDivisionController;
+use App\Http\Controllers\Admin\GrantController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\PermitController;
@@ -97,8 +98,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin']],
     /* request */
     Route::get('fetch-main-service', [ServiceRequestController::class, 'fetchMainService'])->name('fetch-main-service');
     Route::get('fetch-subservice', [ServiceRequestController::class, 'fetchSubService'])->name('fetch-subservice');
-    Route::get('get-services/{id}',[ServiceRequestController::class, 'getServices'])->name('get-services');
-    Route::get('get-sub-services/{id}',[ServiceRequestController::class, 'getsubServices'])->name('get-sub-services');
+    Route::get('get-services/{id}', [ServiceRequestController::class, 'getServices'])->name('get-services');
+    Route::get('get-sub-services/{id}', [ServiceRequestController::class, 'getsubServices'])->name('get-sub-services');
     Route::get('search-client-request', [ServiceRequestController::class, 'search'])->name('search-client-request');
     Route::get('token-number/{code}', [ServiceRequestController::class, 'printToken'])->name('token-number');
     Route::get('service-request/{id}/print', [ServiceRequestController::class, 'printToken'])->name('service-request.print');
@@ -151,5 +152,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin']],
     Route::resource('complaint', ComplaintController::class);
 
     /* Permit */
-    Route::resource('permits',PermitController::class);
+    Route::resource('permits', PermitController::class);
+
+    /* grants */
+    Route::resource('grants', GrantController::class);
 });

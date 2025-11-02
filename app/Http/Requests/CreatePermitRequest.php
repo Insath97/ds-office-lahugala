@@ -31,6 +31,7 @@ class CreatePermitRequest extends FormRequest
             'address' => 'required|string',
             'type_of_land' => 'required|in:agricultural,residential,commercial,industrial,forest,barren,pasture,mining,recreational,conservation',
             'extend' => 'required|in:acre,root,perches,hectare',
+            'extent_value' => 'nullable|numeric|min:0',
             'surveyed' => 'boolean',
             'surveyed_plan_no' => 'nullable|string|max:255|required_if:surveyed,1',
             'boundary_north' => 'required|string|max:255',

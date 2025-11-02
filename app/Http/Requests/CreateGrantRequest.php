@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdatePermitRequest extends FormRequest
+class CreateGrantRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,15 +21,15 @@ class UpdatePermitRequest extends FormRequest
      */
     public function rules(): array
     {
-        $permitId = $this->route('permit');
-
         return [
             'client_id' => 'required|exists:clients,id',
             'gn_division_id' => 'required|exists:g_n_divisions,id',
-            'code' => 'required|string|max:255|unique:permits,code,' . $permitId,
-            'permit_holder_copy' => 'boolean',
-            'office_holder_copy' => 'boolean',
-            'ledger' => 'boolean',
+            'code' => 'required|string|max:255|unique:grants,code',
+            'land_registry_no' => 'required|string|max:255|unique:grants,land_registry_no',
+            'date_of_issued' => 'required|date',
+            'original_in_grantee' => 'boolean',
+            'office_copy' => 'boolean',
+            'land_registry_copy' => 'boolean',
             'address' => 'required|string',
             'type_of_land' => 'required|in:agricultural,residential,commercial,industrial,forest,barren,pasture,mining,recreational,conservation',
             'extend' => 'required|in:acre,root,perches,hectare',
@@ -44,10 +44,11 @@ class UpdatePermitRequest extends FormRequest
             'name_of_nominees' => 'nullable|string|max:255|required_if:nomination,1',
             'relationship' => 'nullable|string|max:255|required_if:nomination,1',
             'nominated_date' => 'nullable|date|required_if:nomination,1',
-            'grant_issued' => 'boolean',
-            'grant_no' => 'nullable|string|max:255|required_if:grant_issued,1',
-            'land_registry_no' => 'nullable|string|max:255|required_if:grant_issued,1',
-            'date_of_issued' => 'nullable|date|required_if:grant_issued,1',
+            'transferred' => 'boolean',
+            'transferee_name' => 'nullable|string|max:255|required_if:transferred,1',
+            'transferred_extend_area' => 'nullable|numeric|min:0|required_if:transferred,1',
+            'related_permit_no' => 'nullable|string|max:255',
+            'permit_issued_date' => 'nullable|date',
             'description' => 'nullable|string',
         ];
     }

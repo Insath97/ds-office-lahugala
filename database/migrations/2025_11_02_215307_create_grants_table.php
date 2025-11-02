@@ -11,16 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('permits', function (Blueprint $table) {
+        Schema::create('grants', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
             $table->foreignId('gn_division_id')->constrained('g_n_divisions')->onDelete('cascade');
             $table->string('code')->unique();
-            $table->boolean('permit_holder_copy')->default(false);
-            $table->boolean('office_holder_copy')->default(false);
-            $table->boolean('ledger')->default(false);
+            $table->string('land_registry_no')->unique();
+            $table->date('date_of_issued');
+            $table->boolean('original_in_grantee')->default(false);
+            $table->boolean('office_copy')->default(false);
+            $table->boolean('land_registry_copy')->default(false);
             $table->text('address');
-
             $table->enum('type_of_land', [
                 'agricultural',
                 'residential',
@@ -33,7 +34,6 @@ return new class extends Migration
                 'recreational',
                 'conservation'
             ]);
-
             $table->enum('extend', [
                 'acre',
                 'root',
@@ -41,28 +41,21 @@ return new class extends Migration
                 'hectare'
             ]);
             $table->decimal('extent_value', 10, 2)->nullable();
-
             $table->boolean('surveyed')->default(false);
             $table->string('surveyed_plan_no')->nullable();
-
-            // Boundaries
             $table->string('boundary_north');
             $table->string('boundary_east');
             $table->string('boundary_south');
             $table->string('boundary_west');
-
-            // Nomination information
             $table->boolean('nomination')->default(false);
             $table->string('name_of_nominees')->nullable();
             $table->string('relationship')->nullable();
             $table->date('nominated_date')->nullable();
-
-            // Grant information
-            $table->boolean('grant_issued')->default(false);
-            $table->string('grant_no')->nullable();
-            $table->string('land_registry_no')->nullable();
-            $table->date('date_of_issued')->nullable();
-
+            $table->boolean('transferred')->default(false);
+            $table->string('transferee_name')->nullable();
+            $table->decimal('transferred_extend_area', 10, 2)->nullable();
+            $table->string('related_permit_no')->nullable();
+            $table->date('permit_issued_date')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
         });
@@ -73,6 +66,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('permits');
+        Schema::dropIfExists('grants');
     }
 };
