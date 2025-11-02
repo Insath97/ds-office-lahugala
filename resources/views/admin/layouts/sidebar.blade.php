@@ -45,18 +45,36 @@
                 </li>
             @endif
 
-            <li class="menu-header">Land Section</li>
-            <li class="dropdown {{ setSidebarActive(['admin.permits.*', 'admin.grants.*']) }}">
-                <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
-                    <i class="fas fa-landmark"></i>
-                    <span>Land Branch</span></a>
-                <ul class="dropdown-menu">
-                    <li class="{{ setSidebarActive(['admin.permits.*']) }}"><a class="nav-link"
-                            href="{{ route('admin.permits.index') }}">Permits</a></li>
-                    <li class="{{ setSidebarActive(['admin.grants.*']) }}"><a class="nav-link"
-                            href="{{ route('admin.grants.index') }}">Grands</a></li>
-                </ul>
-            </li>
+            {{-- Land Section with Permissions --}}
+            @if (canAccess([
+                    'Grant Index',
+                    'Grant Create',
+                    'Grant Update',
+                    'Grant Delete',
+                    'Grant View',
+                    'Permit Index',
+                    'Permit Create',
+                    'Permit Update',
+                    'Permit Delete',
+                    'Permit View',
+                ]))
+                <li class="menu-header">Land Section</li>
+                <li class="dropdown {{ setSidebarActive(['admin.permits.*', 'admin.grants.*']) }}">
+                    <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
+                        <i class="fas fa-landmark"></i>
+                        <span>Land Branch</span></a>
+                    <ul class="dropdown-menu">
+                        @if (canAccess(['Permit Index', 'Permit Create', 'Permit Update', 'Permit Delete', 'Permit View']))
+                            <li class="{{ setSidebarActive(['admin.permits.*']) }}"><a class="nav-link"
+                                    href="{{ route('admin.permits.index') }}">Permits</a></li>
+                        @endif
+                        @if (canAccess(['Grant Index', 'Grant Create', 'Grant Update', 'Grant Delete', 'Grant View']))
+                            <li class="{{ setSidebarActive(['admin.grants.*']) }}"><a class="nav-link"
+                                    href="{{ route('admin.grants.index') }}">Grants</a></li>
+                        @endif
+                    </ul>
+                </li>
+            @endif
 
             {{-- payment section --}}
             @if (canAccess(['Payment Index']))

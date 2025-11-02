@@ -91,6 +91,20 @@ class PermissionSeeder extends Seeder
 
             /* System Setting  */
             ['name' => 'System Setting Index', 'group_name' => 'System Setting Permissions'],
+
+            /* Grant Permissions */
+            ['name' => 'Grant Index',  'group_name' => 'Grant Permissions'],
+            ['name' => 'Grant Create', 'group_name' => 'Grant Permissions'],
+            ['name' => 'Grant Update', 'group_name' => 'Grant Permissions'],
+            ['name' => 'Grant Delete', 'group_name' => 'Grant Permissions'],
+            ['name' => 'Grant View', 'group_name' => 'Grant Permissions'],
+
+            /* Permit Permissions */
+            ['name' => 'Permit Index',  'group_name' => 'Permit Permissions'],
+            ['name' => 'Permit Create', 'group_name' => 'Permit Permissions'],
+            ['name' => 'Permit Update', 'group_name' => 'Permit Permissions'],
+            ['name' => 'Permit Delete', 'group_name' => 'Permit Permissions'],
+            ['name' => 'Permit View', 'group_name' => 'Permit Permissions'],
         ];
 
         foreach ($permissions as $permission) {

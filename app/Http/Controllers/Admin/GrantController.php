@@ -12,6 +12,15 @@ use Illuminate\Http\Request;
 
 class GrantController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['permission:Grant Index,admin'])->only(['index']);
+        $this->middleware(['permission:Grant Create,admin'])->only(['create', 'store']);
+        $this->middleware(['permission:Grant Update,admin'])->only(['edit', 'update']);
+        $this->middleware(['permission:Grant Delete,admin'])->only(['destroy']);
+        $this->middleware(['permission:Grant View,admin'])->only(['show']);
+    }
+
     public function index()
     {
         $grants = Grant::with(['client', 'gnDivision'])->latest()->get();

@@ -12,6 +12,15 @@ use Illuminate\Http\Request;
 
 class PermitController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['permission:Permit Index,admin'])->only(['index']);
+        $this->middleware(['permission:Permit Create,admin'])->only(['create', 'store']);
+        $this->middleware(['permission:Permit Update,admin'])->only(['edit', 'update']);
+        $this->middleware(['permission:Permit Delete,admin'])->only(['destroy']);
+        $this->middleware(['permission:Permit View,admin'])->only(['show']);
+    }
+
     public function index()
     {
         $permits = Permit::with(['client', 'gnDivision'])->latest()->get();
